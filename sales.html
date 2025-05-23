@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoDeals - Car Sales System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .car-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .car-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .car-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 70h60v5H20z" fill="white" opacity="0.2"/><path d="M15 65h10v10H15z" fill="white" opacity="0.3"/><path d="M75 65h10v10H75z" fill="white" opacity="0.3"/><path d="M25 50h50v15H25z" fill="white" opacity="0.4"/><path d="M30 40h40v10H30z" fill="white" opacity="0.3"/></svg>') center/80px no-repeat;
+        }
+
+        .car-info {
+            padding: 25px;
+        }
+
+        .car-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .car-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .car-detail {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .car-detail::before {
+            content: '•';
+            color: #667eea;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .car-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        .car-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background: #27ae60;
+            color: white;
+        }
+
+        .status-sold {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status-reserved {
+            background: #f39c12;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .cars-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .car-actions {
+                flex-direction: column;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header fade-in">
+            <h1>🚗 AutoDeals</h1>
+            <p>Find Your Perfect Car Today</p>
+        </header>
+
+        <section class="search-section fade-in">
+            <form class="search-form" id="searchForm">
+                <div class="form-group">
+                    <label for="make">Make</label>
+                    <select id="make">
+                        <option value="">Any Make</option>
+                        <option value="Toyota">Toyota</option>
+                        <option value="Honda">Honda</option>
+                        <option value="Ford">Ford</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Mercedes">Mercedes</option>
+                        <option value="Audi">Audi</option>
+                        <option value="Volkswagen">Volkswagen</option>
+                        <option value="Nissan">Nissan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="minPrice">Min Price</label>
+                    <input type="number" id="minPrice" placeholder="$0" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="maxPrice">Max Price</label>
+                    <input type="number" id="maxPrice" placeholder="$100,000" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <select id="year">
+                        <option value="">Any Year</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="search-btn">🔍 Search Cars</button>
+                </div>
+            </form>
+        </section>
+
+        <main id="carsContainer" class="fade-in">
+            <div class="cars-grid" id="carsGrid">
+                <!-- Cars will be populated by JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sample car data
+        const cars = [
+            {
+                id: 1,
+                make: 'Toyota',
+                model: 'Camry',
+                year: 2023,
+                price: 28500,
+                mileage: 15000,
+                transmission: 'Automatic',
+                fuel: 'Gas',
+                color: 'Silver',
+                status: 'available'
+            },
+            {
+                id: 2,
+                make: 'Honda',
+                model: 'Civic',
+                year: 2022,
+                price: 24900,
+                mileage: 22000,
+                transmission: 'Manual',
+                fuel: 'Gas',
+                color: 'Blue',
+                status: 'available'
+            },
+            {
+                id: 3,
+                make: 'BMW',
+                model: 'X5',
+                year: 2024,
+                price: 65000,
+                mileage: 5000,
+                transmission: 'Automatic',
+                fuel: 'Gas',
+                color: 'Black',
+                status: 'sold'
+            },
+            {
+                id: 4,
+                make: 'Mercedes',
+                model: 'C-Class',
+                year: 2023,
+                price: 45000,
+                mileage: 12000,
+                transmission: 'Automatic',
+                fuel: 'Gas',
+                color: 'White',
+                status: 'reserved'
+            },
+            {
+                id: 5,
+                make: 'Ford',
+                model: 'F-150',
+                year: 2022,
+                price: 38000,
+                mileage: 30000,
+                transmission: 'Automatic',
+                fuel: 'Gas',
+                color: 'Red',
+                status: 'available'
+            },
+            {
+                id: 6,
+                make: 'Audi',
+                model: 'A4',
+                year: 2023,
+                price: 42000,
+                mileage: 18000,
+                transmission: 'Automatic',
+                fuel: 'Gas',
+                color: 'Gray',
+                status: 'available'
+            },
+            {
+                id: 7,
+                make: 'Volkswagen',
+                model: 'Golf',
+                year: 2021,
+                price: 22000,
+                mileage: 35000,
+                transmission: 'Manual',
+                fuel: 'Gas',
+                color: 'Green',
+                status: 'available'
+            },
+            {
+                id: 8,
+                make: 'Nissan',
+                model: 'Altima',
+                year: 2022,
+                price: 26500,
+                mileage: 20000,
+                transmission: 'Automatic',
+                fuel: 'Gas',
+                color: 'Silver',
+                status: 'available'
+            }
+        ];
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                available: '<span class="status-badge status-available">Available</span>',
+                sold: '<span class="status-badge status-sold">Sold</span>',
+                reserved: '<span class="status-badge status-reserved">Reserved</span>'
+            };
+            return badges[status] || '';
+        }
+
+        function createCarCard(car) {
+            return `
+                <div class="car-card">
+                    ${getStatusBadge(car.status)}
+                    <div class="car-image">
+                        ${car.make} ${car.model}
+                    </div>
+                    <div class="car-info">
+                        <h3 class="car-title">${car.year} ${car.make} ${car.model}</h3>
+                        <div class="car-details">
+                            <div class="car-detail">${car.mileage.toLocaleString()} miles</div>
+                            <div class="car-detail">${car.transmission}</div>
+                            <div class="car-detail">${car.fuel}</div>
+                            <div class="car-detail">${car.color}</div>
+                        </div>
+                        <div class="car-price">${formatPrice(car.price)}</div>
+                        <div class="car-actions">
+                            <button class="btn btn-primary" onclick="viewDetails(${car.id})" ${car.status !== 'available' ? 'disabled' : ''}>
+                                ${car.status === 'available' ? 'View Details' : car.status.toUpperCase()}
+                            </button>
+                            <button class="btn btn-secondary" onclick="contactDealer(${car.id})" ${car.status === 'sold' ? 'disabled' : ''}>
+                                Contact Dealer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayCars(carsToShow) {
+            const carsGrid = document.getElementById('carsGrid');
+            
+            if (carsToShow.length === 0) {
+                carsGrid.innerHTML = '<div class="no-results">No cars found matching your criteria. Try adjusting your search filters.</div>';
+                return;
+            }
+
+            carsGrid.innerHTML = carsToShow.map(car => createCarCard(car)).join('');
+        }
+
+        function filterCars() {
+            const make = document.getElementById('make').value;
+            const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseInt(document.getElementById('maxPrice').value) || Infinity;
+            const year = document.getElementById('year').value;
+
+            const filteredCars = cars.filter(car => {
+                return (
+                    (make === '' || car.make === make) &&
+                    (car.price >= minPrice && car.price <= maxPrice) &&
+                    (year === '' || car.year.toString() === year)
+                );
+            });
+
+            displayCars(filteredCars);
+        }
+
+        function viewDetails(carId) {
+            const car = cars.find(c => c.id === carId);
+            if (car) {
+                alert(`Car Details:\n\nYear: ${car.year}\nMake: ${car.make}\nModel: ${car.model}\nPrice: ${formatPrice(car.price)}\nMileage: ${car.mileage.toLocaleString()} miles\nTransmission: ${car.transmission}\nFuel: ${car.fuel}\nColor: ${car.color}\nStatus: ${car.status.toUpperCase()}`);
+            }
+        }
+
+        function contactDealer(carId) {
+            const car = cars.find(c => c.id === carId);
+            if (car) {
+                alert(`Thank you for your interest in the ${car.year} ${car.make} ${car.model}!\n\nA dealer will contact you shortly.\n\nPhone: (555) 123-4567\nEmail: sales@autodeals.com`);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            filterCars();
+        });
+
+        // Add real-time filtering
+        ['make', 'minPrice', 'maxPrice', 'year'].forEach(id => {
+            document.getElementById(id).addEventListener('change', filterCars);
+        });
+
+        // Initial display
+        displayCars(cars);
+
+        // Add fade-in animation to car cards when they load
+        setTimeout(() => {
+            const carCards = document.querySelectorAll('.car-card');
+            carCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('fade-in');
+                }, index * 100);
+            });
+        }, 100);
+    </script>
+</body>
+</html>
